@@ -12,22 +12,24 @@
 #                                                                #
 ##################################################################
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'amp-front'
-require 'spec'
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-include Amp
-
-Spec::Runner.configure do |config|
-end
-
-def swizzling_stdout
-  new_stdout = StringIO.new
-  $stdout, old_stdout = new_stdout, $stdout
-  yield
-  new_stdout.string
-ensure
-  $stdout = old_stdout
-  new_stdout.string
+describe Amp::Command::Base::Help do
+  it 'creates the help command' do
+    Amp::Command::Base::Help.should_not be_nil
+  end
+  
+  it 'stores the help command in the all_commands list' do
+    Amp::Command::Base.all_commands.should include(Amp::Command::Base::Help)
+  end
+  
+  it 'can be looked up as base help' do
+    Amp::Command.for_name('base help').should == Amp::Command::Base::Help
+  end
+  
+  it 'prints the help text of all commands' do
+    Amp::Command::Base.should_receive(:all_commands).
+                       and_return([Amp::Command::Base::Help])
+    run_command('base help').should include('Shows this help')
+  end
 end

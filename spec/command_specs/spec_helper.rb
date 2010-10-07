@@ -12,22 +12,26 @@
 #                                                                #
 ##################################################################
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'amp-front'
-require 'spec'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-include Amp
-
-Spec::Runner.configure do |config|
+def run_command(command, opts={}, args=[])
+  swizzling_stdout do
+    Amp::Command.for_name(command).new.run(opts, args)
+  end
 end
 
-def swizzling_stdout
-  new_stdout = StringIO.new
-  $stdout, old_stdout = new_stdout, $stdout
+
+def next_name
+  # Shared by all subclasses.
+  @@__next_name_counter ||= 0
+  @@__next_name_counter += 1
+  "TempClass#{@@__next_name_counter}"
+end
+
+def swizzling_argv(argv)
+  old_argv = ARGV.dup
+  ARGV.replace(argv)
   yield
-  new_stdout.string
 ensure
-  $stdout = old_stdout
-  new_stdout.string
+  ARGV.replace(old_argv)
 end

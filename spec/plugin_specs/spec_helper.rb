@@ -12,22 +12,4 @@
 #                                                                #
 ##################################################################
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'amp-front'
-require 'spec'
-
-include Amp
-
-Spec::Runner.configure do |config|
-end
-
-def swizzling_stdout
-  new_stdout = StringIO.new
-  $stdout, old_stdout = new_stdout, $stdout
-  yield
-  new_stdout.string
-ensure
-  $stdout = old_stdout
-  new_stdout.string
-end
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')

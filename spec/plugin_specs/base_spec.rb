@@ -12,22 +12,25 @@
 #                                                                #
 ##################################################################
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'amp-front'
-require 'spec'
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-include Amp
-
-Spec::Runner.configure do |config|
-end
-
-def swizzling_stdout
-  new_stdout = StringIO.new
-  $stdout, old_stdout = new_stdout, $stdout
-  yield
-  new_stdout.string
-ensure
-  $stdout = old_stdout
-  new_stdout.string
+describe Amp::Plugins::Base do
+  it 'yields itself for easy configuration' do
+    new_plugin = Amp::Plugins::Base.create('silly') do |plugin|
+      plugin.author = 'Michael Edgar'
+    end
+    new_plugin.author.should == 'Michael Edgar'
+  end
+  
+  it 'mentions its author when inspected' do
+    plugin = Amp::Plugins::Base.create('silly') do |plugin|
+      plugin.author = 'adgar@carboni.ca'
+    end
+    plugin.new.inspect.should include('adgar@carboni.ca')
+  end
+  
+  it 'infers its own module name' do
+    plugin = Amp::Plugins::Base.create('silly')
+    plugin.new.module.should == 'Amp::Plugins::Silly'
+  end
 end
