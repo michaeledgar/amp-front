@@ -28,8 +28,6 @@ describe Amp::Command::Help do
   end
   
   it 'prints the help text of all commands' do
-    Amp::Command::Base.should_receive(:all_commands).
-                       and_return([Amp::Command::Help])
-    run_command('help').should include('Shows this help')
+    run_command('help').should include('Thanks for using Amp!')
   end
 end

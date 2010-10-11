@@ -1,8 +1,23 @@
+##################################################################
+#                  Licensing Information                         #
+#                                                                #
+#  The following code is licensed, as standalone code, under     #
+#  the Ruby License, unless otherwise directed within the code.  #
+#                                                                #
+#  For information on the license of this code when distributed  #
+#  with and used in conjunction with the other modules in the    #
+#  Amp project, please see the root-level LICENSE file.          #
+#                                                                #
+#  © Michael J. Edgar and Ari Brown, 2009-2010                   #
+#                                                                #
+##################################################################
 Amp::Command.create('help') do |c|
-  c.desc 'Shows this help'
-  c.on_run do |opts, args|
-    Amp::Command::Base.all_commands.each do |command|
-      puts "#{command.name.downcase} - #{command.desc}"
-    end
+  c.desc "Prints the help for the program."
+  
+  c.on_run do |options, args|
+    output = ""
+    
+    cmd_name = args.empty? ? "__default__" : args.first
+    Amp::Help::HelpUI.print_entry(cmd_name, options)
   end
 end

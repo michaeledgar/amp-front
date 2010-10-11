@@ -1,0 +1,6 @@
+These are the following commands available:
+
+<% Amp::Command::Base.all_commands.sort {|c1, c2| c1.name.to_s <=> c2.name.to_s}.each do |command| -%>
+<%= command.name.to_s.downcase.ljust(30, " ")%><%= command.desc %>
+<%- end %>
+Run "amp help [command]" for more information.

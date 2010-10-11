@@ -11,7 +11,6 @@
 #  © Michael J. Edgar and Ari Brown, 2009-2010                   #
 #                                                                #
 ##################################################################
-require 'amp-front/dispatch/commands/command'
 
 module Amp
   module Dispatch
@@ -20,7 +19,7 @@ module Amp
     # to use, and call run! to run Amp.
     class Runner
       def initialize(args, opts={})
-        @args = args
+        @args, @opts = args, opts
       end
     
       def run!
@@ -64,5 +63,3 @@ module Amp
     end
   end
 end
-    
-    

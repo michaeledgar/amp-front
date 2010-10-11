@@ -13,7 +13,7 @@
 ##################################################################
 
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
-require 'amp-front/dispatch/commands/command.rb'
+require 'amp-front/dispatch/commands/base.rb'
 
 describe Amp::Command do
   it 'should fail to look up a nonexistent command' do
@@ -45,6 +45,12 @@ describe Amp::Command do
     
     it 'can be looked up by for_name' do
       Amp::Command.for_name(@command_name).should == @class
+    end
+    
+    it "doesn't crash if you have an odd argument" do
+      # The hyphen cause const_defined? to bail at one point since it's
+      # not allowed in module names
+      Amp::Command.for_name("#{@command_name} new-commands").should == @class
     end
     
     it 'can be looked up by a set of command line arguments' do
