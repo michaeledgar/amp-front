@@ -46,11 +46,12 @@ module Amp
       end
       
       def collect_options!
-        Trollop::options do
+        _, hash = Trollop::options do
           banner "Amp - some more crystal, sir?"
           version "Amp version #{Amp::VERSION} (#{Amp::VERSION_TITLE})"
           stop_on_unknown
         end
+        hash
       end
     
       def with_argv(new_argv)

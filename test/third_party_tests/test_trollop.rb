@@ -934,7 +934,7 @@ EOM
   def test_alternate_args
     args = %w(-a -b -c)
 
-    opts = ::Trollop.options(args) do
+    _, opts = ::Trollop.options(args) do
       opt :alpher, "Ralph Alpher", :short => "-a"
       opt :bethe, "Hans Bethe", :short => "-b"
       opt :gamow, "George Gamow", :short => "-c"
@@ -1136,7 +1136,7 @@ EOM
     ARGV.unshift "--potato"
     opts = nil
     assert_nothing_raised do
-      opts = ::Trollop::options do
+      _, opts = ::Trollop::options do
         opt :potato
       end
     end
