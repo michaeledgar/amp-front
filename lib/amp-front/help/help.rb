@@ -61,8 +61,21 @@ module Amp
       # @param [String, #to_s] name the name of the entry. Note - you will also
       #   need to provide the entry, because there might be naming conflicts.
       # @param [HelpEntry] entry the entry to remove from the registry.
-      def unregister(name, entry)
-        entries[name].delete entry
+      def unregister(name, entry=nil)
+        case entries[name].size
+        when 0
+          raise ArgumentError.new("No help entry named '#{name}' found.")
+        when 1
+          entries[name].clear
+        else
+          if entry.nil?
+            raise ArgumentError.new("Multiple help entries named '#{name}': " +
+                                    'you must provide which one to remove to ' +
+                                    '#unregister.')
+          else
+            entries[name].delete entry
+          end
+        end
       end
     end
     
@@ -206,7 +219,6 @@ module Amp
     # Commands are actually quite complicated, and themselves know how to educate
     # users about their use, so we have surprisingly little logic in this class.
     class CommandHelpEntry < HelpEntry      
-      
       ##
       # Creates a new command help entry. Differing arguments, because instead of
       # text, we need the command itself. One might think: why not just pass in
