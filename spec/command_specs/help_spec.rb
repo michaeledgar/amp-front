@@ -14,22 +14,22 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe Amp::Command::Base::Help do
+describe Amp::Command::Help do
   it 'creates the help command' do
-    Amp::Command::Base::Help.should_not be_nil
+    Amp::Command::Help.should_not be_nil
   end
   
   it 'stores the help command in the all_commands list' do
-    Amp::Command::Base.all_commands.should include(Amp::Command::Base::Help)
+    Amp::Command::Base.all_commands.should include(Amp::Command::Help)
   end
   
   it 'can be looked up as base help' do
-    Amp::Command.for_name('base help').should == Amp::Command::Base::Help
+    Amp::Command.for_name('help').should == Amp::Command::Help
   end
   
   it 'prints the help text of all commands' do
     Amp::Command::Base.should_receive(:all_commands).
-                       and_return([Amp::Command::Base::Help])
-    run_command('base help').should include('Shows this help')
+                       and_return([Amp::Command::Help])
+    run_command('help').should include('Shows this help')
   end
 end
