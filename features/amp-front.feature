@@ -26,3 +26,11 @@ Feature: Help Command
     And the argument new-commands
     When I run dispatch
     Then I should see "commands are the driving force behind"
+
+  Scenario: Running help help
+    Given the argument help
+    And the argument help
+    When I run dispatch
+    Then I should see "  --help, -h"
+    And I should see "Show this message"
+    And I should see "Prints the help for the program."

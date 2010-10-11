@@ -24,7 +24,8 @@ module Amp
       new_class = Class.new(Base)
       new_class.name = name
       yield new_class
-      @current_base_module.const_set(name.to_s, new_class)
+      @current_base_module.const_set(name, new_class)
+      Amp::Help::CommandHelpEntry.new(name.downcase, new_class)
       new_class
     end
     
@@ -121,6 +122,16 @@ module Amp
           end
         end
         hash
+      end
+      
+      def education
+        if @parser
+          output = StringIO.new
+          @parser.educate(output)
+          output.string
+        else
+          ''
+        end
       end
     end
   end

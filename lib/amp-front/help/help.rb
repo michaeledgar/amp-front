@@ -234,9 +234,9 @@ module Amp
       #   differently. Who are we to judge?
       # @return [String] the help text for the entry.
       def text(options = {})
-        @command.collect_options
-        @command.educate
-        ""
+        instantiated = @command.new
+        instantiated.collect_options
+        "#{@command.desc}\n#{instantiated.education}"
       end
       
       ##
