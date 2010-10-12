@@ -106,9 +106,8 @@ module Amp
                   else
                     HelpEntry
                   end
-          without_entry_dir = File.expand_path(File.join(File.dirname(__FILE__), "entries"))
-          name = filename[without_entry_dir.size+1..-1].gsub(/\//,":")
-          klass.new(name.split(".", 2).first, File.read(filename))
+          name = File.basename(filename).split(".", 2).first
+          klass.new(name, File.read(filename))
         end
       end
       
@@ -192,7 +191,6 @@ module Amp
     #
     # See our extensions to the String class for more.
     class ErbHelpEntry < HelpEntry
-      
       ##
       # Returns the help text to display for this entry.
       #
