@@ -88,4 +88,10 @@ describe Amp::Command do
       Amp::Command.for_name("tempnamespace #{@name.downcase}").should == @class
     end
   end 
+
+  context 'when no name given' do
+    it 'should return Amp::Command' do
+      Amp::Command.for_name('').should == Amp::Command
+    end
+  end
 end
