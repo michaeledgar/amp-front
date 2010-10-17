@@ -76,4 +76,18 @@ describe Amp::Command::Base do
       end
     end
   end
+
+  it 'should have a name' do
+    @klass.name.should_not be_nil
+  end
+
+  describe '#all_commands' do
+    it 'should not include nil' do
+      @klass.all_commands.should_not include(nil)
+    end
+
+    it 'should have itself' do
+      @klass.all_commands.should include(@klass)
+    end
+  end
 end

@@ -70,6 +70,7 @@ module Amp
       class << self
         attr_accessor :name, :options, :desc
       end
+      self.name = 'Base'
 
       # This tracks all subclasses (and subclasses of subclasses, etc). Plus, this
       # method is inherited, so Wool::Plugins::Git.all_subclasses will have all
@@ -81,6 +82,7 @@ module Amp
       # When a Plugin subclass is subclassed, store the subclass and inform the
       # next superclass up the inheritance hierarchy.
       def self.inherited(klass)
+        klass.name ||= 'anonymous ' + self.name
         self.all_commands << klass
         next_klass = self.superclass
         while next_klass != Amp::Command::Base.superclass
