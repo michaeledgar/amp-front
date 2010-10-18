@@ -49,6 +49,14 @@ describe Amp::Dispatch::Runner do
       runner = Amp::Dispatch::Runner.new(['tester', '--verbose'])
       runner.run!
     end
+
+    it 'does not crash when no valid command' do
+      Amp::Command.should_receive(:for_name).
+                   with('').
+                   and_return(nil)
+      runner = Amp::Dispatch::Runner.new([''])
+      lambda {runner.run!}.should raise_error(ArgumentError)
+    end
   end
   
   describe '#trim_argv_for_command' do

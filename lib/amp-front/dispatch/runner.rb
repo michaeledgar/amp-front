@@ -27,6 +27,9 @@ module Amp
           global_opts = collect_options!
           
           command_class = Amp::Command.for_name(ARGV.join(' '))
+          if command_class.nil?
+            raise ArgumentError.new("Unknown command #{ARGV.join(' ')}")
+          end
           command = command_class.new
           trim_argv_for_command(command_class)
           opts = global_opts.merge command.collect_options

@@ -90,8 +90,8 @@ describe Amp::Command do
   end 
 
   context 'when no name given' do
-    it 'should return Amp::Command' do
-      Amp::Command.for_name('').should == Amp::Command
+    it 'should return nil' do
+      Amp::Command.for_name('').should == nil
     end
   end
 end

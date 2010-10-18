@@ -47,20 +47,28 @@ module Amp
       @current_base_module = old_namespace
     end
     
-    # Looks up the command with the given name.
-    def self.for_name(name)
-      modules = name.split.map {|name| name.capitalize}
+    # See if the specified module list matches a defined constant
+    def self.lookup_const(modules)
       current = Amp::Command
       modules.each do |module_name|
         if module_name =~ /^[A-Za-z0-9_]+$/ && current.const_defined?(module_name)
           current = current.const_get(module_name)
-        elsif current.is_a?(Class)
-          return current
         else
-          return nil
+          return current
         end
       end
       return current
+    end
+
+    # return the argument if 'new' would succeed
+    def self.creatable(command)
+      command.is_a?(Class) ? command : nil
+    end
+    
+    # Looks up the command with the given name.
+    def self.for_name(name)
+      modules = name.split.map {|name| name.capitalize}
+      creatable(lookup_const(modules))
     end
     
     # The base class frmo which all comamnds inherit.
