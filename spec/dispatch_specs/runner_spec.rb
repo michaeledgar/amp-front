@@ -54,8 +54,17 @@ describe Amp::Dispatch::Runner do
       Amp::Command.should_receive(:for_name).
                    with('').
                    and_return(nil)
+      mock_command_class = mock('command class')
+      mock_command = mock('command')
+      Amp::Command::Help = mock_command_class
+      mock_command_class.should_receive(:name).at_most(:once).and_return('Amp::Command::Help')
+      mock_command_class.should_receive(:new).and_return(mock_command)
+      mock_command.should_receive(:collect_options).and_return({})
+      mock_command.should_receive(:run).with(
+          {:help => false, :version => false}, [""])
+
       runner = Amp::Dispatch::Runner.new([''])
-      lambda {runner.run!}.should raise_error(ArgumentError)
+      runner.run!
     end
   end
   

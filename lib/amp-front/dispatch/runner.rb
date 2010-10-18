@@ -28,10 +28,11 @@ module Amp
           
           command_class = Amp::Command.for_name(ARGV.join(' '))
           if command_class.nil?
-            raise ArgumentError.new("Unknown command #{ARGV.join(' ')}")
+            command_class = Amp::Command::Help
+          else
+            trim_argv_for_command(command_class)
           end
           command = command_class.new
-          trim_argv_for_command(command_class)
           opts = global_opts.merge command.collect_options
           command.run(opts, ARGV)
         end
