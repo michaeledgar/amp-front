@@ -11,7 +11,7 @@
 #  © Michael J. Edgar and Ari Brown, 2009-2010                   #
 #                                                                #
 ##################################################################
-Amp::Command.namespace 'plugin' do |c|
+Amp::Command.namespace 'plugin' do
   Amp::Command.create('list') do |c|
     c.desc "Lists all the plugins known to Amp."
   

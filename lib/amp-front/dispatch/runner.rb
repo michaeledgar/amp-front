@@ -62,12 +62,12 @@ module Amp
       end
       
       def trim_argv_for_command(command)
-        path_parts = command.name.gsub(/Amp::Command::/, '').gsub(/::/, ' ').split
+        path_parts = command.inspect.gsub(/Amp::Command::/, '').gsub(/::/, ' ').split
         path_parts.each do |part|
           next_part = ARGV.shift
           if next_part.downcase != part.downcase
             raise ArgumentError.new(
-                "Failed to parse command line option for: #{command}")
+                "Failed to parse command line option for: #{command.inspect}")
           end
         end
       end

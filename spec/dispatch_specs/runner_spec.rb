@@ -16,7 +16,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Amp::Dispatch::Runner do
   before do
-    @runner = Amp::Dispatch::Runner.new(['--version'])
+    @runner = Amp::Dispatch::Runner.new(['--version'], :ampfile => "NO SUCH FILE@@@@@@@@@@@@@@@@@@")
   end
 
   describe '#with_argv' do
@@ -40,7 +40,7 @@ describe Amp::Dispatch::Runner do
       Amp::Command.should_receive(:for_name).
                    with('tester --verbose').
                    and_return(mock_command_class)
-      mock_command_class.should_receive(:name).and_return('Amp::Command::Tester')
+      mock_command_class.should_receive(:inspect).and_return('Amp::Command::Tester')
       mock_command_class.should_receive(:new).and_return(mock_command)
       mock_command.should_receive(:collect_options).and_return({:verbose => true})
       mock_command.should_receive(:run).with(
@@ -72,7 +72,7 @@ describe Amp::Dispatch::Runner do
     it 'strips ARGV when ARGV matches the command name' do
       @runner.with_argv(['base', 'help']) do
         command = mock(:command_class)
-        command.should_receive(:name).and_return('Amp::Command::Base')
+        command.should_receive(:inspect).and_return('Amp::Command::Base')
         @runner.trim_argv_for_command(command)
         ARGV.should == ['help']
       end
@@ -81,7 +81,7 @@ describe Amp::Dispatch::Runner do
     it 'strips ARGV for commands in namespaces' do
       @runner.with_argv(['base', 'help']) do
         command = mock(:command_class)
-        command.should_receive(:name).and_return('Amp::Command::Base::Help')
+        command.should_receive(:inspect).and_return('Amp::Command::Base::Help')
         @runner.trim_argv_for_command(command)
         ARGV.should == []
       end
@@ -90,7 +90,7 @@ describe Amp::Dispatch::Runner do
     it 'raises when the command name does not match ARGV' do
       @runner.with_argv(['base', 'hello']) do
         command = mock(:command_class)
-        command.should_receive(:name).and_return('Amp::Command::Base::Help')
+        command.should_receive(:inspect).twice.and_return('Amp::Command::Base::Help')
         proc { @runner.trim_argv_for_command(command) }.should raise_error(ArgumentError)
       end
     end
