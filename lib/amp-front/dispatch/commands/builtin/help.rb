@@ -14,7 +14,7 @@
 Amp::Command.create('help') do |c|
   c.desc "Prints the help for the program."
   
-  c.on_run do |options, args|
+  c.on_call do |options, args|
     output = ""
     
     cmd_name = args.empty? ? "__default__" : args.first
