@@ -119,7 +119,7 @@ module Amp
       end
       
       # Runs the command with the provided options and arguments.
-      def run(options, arguments)
+      def call(options, arguments)
         self.class.on_run.call(options, arguments)
       end
       

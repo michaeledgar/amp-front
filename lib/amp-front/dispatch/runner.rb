@@ -36,7 +36,7 @@ module Amp
           end
           command = command_class.new
           opts = global_opts.merge command.collect_options
-          command.run(opts, ARGV)
+          command.call(opts, ARGV)
         end
       end
       
