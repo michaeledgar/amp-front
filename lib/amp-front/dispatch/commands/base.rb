@@ -147,6 +147,6 @@ module Amp
   end
 end
 
-Dir[File.expand_path(File.dirname(__FILE__)) + '/base/**/*.rb'].each do |file|
+Dir[File.expand_path(File.dirname(__FILE__)) + '/builtin/**/*.rb'].each do |file|
   require file
 end
