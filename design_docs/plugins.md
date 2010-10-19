@@ -24,7 +24,7 @@ are loaded in an arbitrary order.
 
 If a plugin is automatically loaded that you *do not* wish to be loaded, you
 will have to require each one individually. You do not need to manually load
-amp-core.
+amp-core. amp-core will be loaded first.
 
 ## Plugin Callbacks
 

@@ -25,7 +25,9 @@ module Amp
       def run!
         with_argv @args do
           global_opts = collect_options!
-          
+          load_ampfile!
+          load_plugins!
+
           command_class = Amp::Command.for_name(ARGV.join(' '))
           if command_class.nil?
             command_class = Amp::Command::Help
@@ -35,6 +37,27 @@ module Amp
           command = command_class.new
           opts = global_opts.merge command.collect_options
           command.run(opts, ARGV)
+        end
+      end
+      
+      # Loads the ampfile (or whatever it's specified as) from the
+      # current directory or a parent directory.
+      def load_ampfile!(in_dir = Dir.pwd)
+        file = @opts[:ampfile] || 'ampfile'
+        variations = [file, file[0,1].upcase + file[1..-1]] # include titlecase
+        to_load = variations.find {|x| File.exist?(File.join(in_dir, x))}
+        if to_load
+          load to_load
+        elsif File.dirname(in_dir) != in_dir
+          load_ampfile! File.dirname(in_dir)
+        end
+      end
+      
+      def load_plugins!
+        Amp::Plugins::Base.all_plugins.each do |plugin|
+          instance = plugin.new(@opts)
+          instance.load!
+          Amp::Plugins::Base.loaded_plugins << instance
         end
       end
       

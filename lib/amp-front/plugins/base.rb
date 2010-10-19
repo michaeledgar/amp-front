@@ -17,6 +17,7 @@ module Amp
     class Base
       extend ModuleExtensions
       cattr_accessor :module, :author
+      cattr_accessor_with_default :loaded_plugins, []
 
       # This tracks all subclasses (and subclasses of subclasses, etc). Plus, this
       # method is inherited, so Wool::Plugins::Git.all_subclasses will have all
@@ -57,13 +58,29 @@ module Amp
         end
         klass
       end
-    
+      
+      def self.load_rubygems_plugins
+        require 'rubygems'
+        files = Gem.find_files('amp_plugin.rb')
+        files.each do |file|
+          load file
+        end
+      end
+      
+      # Generic initialization all plugins perform. Takes an options hash.
+      def initialize(opts={})
+      end
+      
       def inspect
         "#<Amp::Plugin::#{self.module} #{self.class.name} by #{self.class.author}>"
       end
       
       def module
         self.class.module || self.class.name
+      end
+      
+      def load!
+        # Subclasses should implement this.
       end
     end
   end
