@@ -20,17 +20,35 @@ describe Amp::Command::Base do
     @klass = Class.new(Amp::Command::Base)
   end
   
+  describe '#call' do
+    it "sets the instance's options before running on_call" do
+      input_opts = {:a => :b}
+      received_opts = nil
+      @klass.on_call { received_opts = options }
+      @klass.new.call(input_opts, nil)
+      received_opts.should == input_opts
+    end
+    
+    it "sets the instance's arguments before running on_call" do
+      input_args = [1, 2, 3]
+      received_args = nil
+      @klass.on_call { received_args = arguments }
+      @klass.new.call(nil, input_args)
+      received_args.should == input_args
+    end
+  end 
+  
   describe '#on_call' do
     it "sets the class's on_call handler when a block is given" do
       flag = false
-      @klass.on_call { |opts,args| flag = true }
+      @klass.on_call { flag = true }
       @klass.new.call(nil, nil)
       flag.should be_true
     end
     
     it 'returns the current handler if no block is given' do
       @klass.on_call.should == nil
-      @klass.on_call { |opts,args| puts 'hello' }
+      @klass.on_call { puts 'hello' }
       @klass.on_call.should_not == nil
       @klass.on_call.should respond_to(:call)
     end

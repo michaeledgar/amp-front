@@ -79,6 +79,9 @@ module Amp
         attr_accessor :name, :options, :desc
       end
       self.name = 'Base'
+      
+      # These are the runtime options selected when the command is called.
+      attr_accessor :options, :arguments
 
       # This tracks all subclasses (and subclasses of subclasses, etc). Plus, this
       # method is inherited, so Wool::Plugins::Git.all_subclasses will have all
@@ -120,7 +123,9 @@ module Amp
       
       # Runs the command with the provided options and arguments.
       def call(options, arguments)
-        self.class.on_call.call(options, arguments)
+        self.options = options
+        self.arguments = arguments
+        instance_eval(&self.class.on_call)
       end
       
       # Collects the options specific to this command and returns them.

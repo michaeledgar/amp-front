@@ -14,10 +14,10 @@
 Amp::Command.create('help') do |c|
   c.desc "Prints the help for the program."
   
-  c.on_call do |options, args|
+  c.on_call do
     output = ""
     
-    cmd_name = args.empty? ? "__default__" : args.first
+    cmd_name = arguments.empty? ? "__default__" : arguments.first
     Amp::Help::HelpUI.print_entry(cmd_name, options)
   end
 end

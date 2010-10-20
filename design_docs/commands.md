@@ -61,6 +61,10 @@ But the following commands would not:
 A command definition is roughly as follows:
 
     command "search" do
+      # This command has a repository. Pull in helpers for this common
+      # case, and add the --repository (-R) command-line option.
+      has_repo
+
       # Define options using Trollop syntax
       opt :verbose, "Verbose output", :type => :boolean
       opt :query, "The query to search for", :type => :string
@@ -74,8 +78,14 @@ A command definition is roughly as follows:
       validates_has_repository  # validates :repository option
       
       # specify on_call
-      on_call do |opts, args|
-        repo = opts[:repository]
-        p repo.search(opts[:query])
+      on_call do
+        repo = self.repository
+        p repo.search(options[:query])
       end
     end
+
+When the command runs, its on\_call block is instance\_eval'd by the command
+object. That way, any helper methods defined by the command class can be used
+in the on\_call block. One particularly useful helper for on\_call is "repository"
+which will get the current repository, regardless of type. This is provided by
+amp-core.
