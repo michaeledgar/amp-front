@@ -24,7 +24,7 @@ describe Amp::Command::Base do
     it "sets the class's on_run handler when a block is given" do
       flag = false
       @klass.on_run { |opts,args| flag = true }
-      @klass.new.run(nil, nil)
+      @klass.new.call(nil, nil)
       flag.should be_true
     end
     
