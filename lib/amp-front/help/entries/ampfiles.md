@@ -24,7 +24,7 @@
     command "stats" do |c|
       c.workflow :hg
       c.desc "Prints how many commits each user has contributed"
-      c.on_run do |opts, args|
+      c.on_call do |opts, args|
         repo = opts[:repository]
         users = Hash.new {|h, k| h[k] = 0}
         repo.each do |changeset|

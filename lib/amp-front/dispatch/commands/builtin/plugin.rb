@@ -15,7 +15,7 @@ Amp::Command.namespace 'plugin' do
   Amp::Command.create('list') do |c|
     c.desc "Lists all the plugins known to Amp."
   
-    c.on_run do |options, args|
+    c.on_call do |options, args|
       Amp::Plugins::Base.all_plugins.each do |plugin|
         puts plugin.name
       end

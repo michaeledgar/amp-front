@@ -16,7 +16,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'validations.rb'))
 module Amp
   module Command
     # Creates a new command class and sets its name appropriately. Yields
-    # it, so it can be customized by the caller, adding options, an on_run
+    # it, so it can be customized by the caller, adding options, an on_call
     # block, and so on.
     def self.create(name)
       @current_base_module ||= Amp::Command
@@ -100,9 +100,9 @@ module Amp
       end
 
       # Specifies the block to run, or returns the block.
-      def self.on_run(&block)
-        @on_run = block if block_given?
-        @on_run
+      def self.on_call(&block)
+        @on_call = block if block_given?
+        @on_call
       end
       
       def self.desc(*args)
@@ -120,7 +120,7 @@ module Amp
       
       # Runs the command with the provided options and arguments.
       def call(options, arguments)
-        self.class.on_run.call(options, arguments)
+        self.class.on_call.call(options, arguments)
       end
       
       # Collects the options specific to this command and returns them.

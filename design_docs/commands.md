@@ -73,8 +73,8 @@ A command definition is roughly as follows:
       validates_inclusion_of :query
       validates_has_repository  # validates :repository option
       
-      # specify on_run
-      on_run do |opts, args|
+      # specify on_call
+      on_call do |opts, args|
         repo = opts[:repository]
         p repo.search(opts[:query])
       end

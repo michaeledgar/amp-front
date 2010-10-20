@@ -13,7 +13,7 @@ All of _amp_'s commands have access to a first-class options parser and command 
         c.opt :template, "Which template to use while printing", 
                          {:short => "-t", :type => :string, :default => "default"}
         c.opt :no_output, "Doesn't print output (useful for benchmarking)"
-        c.on_run do |options, args|
+        c.on_call do |options, args|
           repo = options[:repository]
           limit = options[:limit]
           limit = repo.size if limit == -1
@@ -58,7 +58,7 @@ By declaring `c.opt :verbose`, we create a `--verbose` option for our `amp log` 
 
 For more ways to configure your options, see the documentation for the `opt` method in the Command class..
 
-    c.on_run do |options, args|
+    c.on_call do |options, args|
       repo = options[:repository]
       limit = options[:limit]
       limit = repo.size if limit == -1
@@ -72,7 +72,7 @@ For more ways to configure your options, see the documentation for the `opt` met
       end
     end
 
-Last, but not least, we have the `on_run` method. This is how we declare what _happens_ when our command is run - which is what we really care about! You specify what the command does in `on_run`'s block, which takes two arguments: `options` and `args`. These are, respectively, the command-line options passed in plus amp's additions, and the arguments provided by the user. For example: `amp log --verbose --limit=3 arg1 arg2` would provide `{:verbose => true, :limit => 3, :repository => repo}` as `options` and `["arg1", "arg2"]` as `args`.
+Last, but not least, we have the `on_call` method. This is how we declare what _happens_ when our command is run - which is what we really care about! You specify what the command does in `on_call`'s block, which takes two arguments: `options` and `args`. These are, respectively, the command-line options passed in plus amp's additions, and the arguments provided by the user. For example: `amp log --verbose --limit=3 arg1 arg2` would provide `{:verbose => true, :limit => 3, :repository => repo}` as `options` and `["arg1", "arg2"]` as `args`.
 
 Our command is getting changeset information, so it needs a repository to interact with. Unless told to do otherwise, _amp_ will look for a repository and store it in `options[:repository]`. This will always be an object of the class LocalRepository.
 
