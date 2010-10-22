@@ -24,16 +24,15 @@ module Amp
     
       def run!
         with_argv @args do
-          global_opts = collect_options!
+          global_opts, arguments = collect_options(ARGV)
           load_ampfile!
           load_plugins!
 
-          command_class = Amp::Command.for_name(ARGV.join(' '))
+          command_class = Amp::Command.for_name(arguments.join(' '))
           if command_class.nil?
             command_class = Amp::Command::Help
-            arguments = []
           else
-            arguments = trim_argv_for_command(ARGV, command_class)
+            arguments = trim_argv_for_command(arguments, command_class)
           end
           command = command_class.new
           opts, arguments = command.collect_options(arguments)
@@ -75,13 +74,14 @@ module Amp
         argv
       end
       
-      def collect_options!
-        _, hash = Trollop::options do
+      def collect_options(arguments)
+        argv = arguments.dup
+        _, hash = Trollop::options(argv) do
           banner "Amp - some more crystal, sir?"
           version "Amp version #{Amp::VERSION} (#{Amp::VERSION_TITLE})"
           stop_on_unknown
         end
-        hash
+        [hash, argv]
       end
     
       def with_argv(new_argv)

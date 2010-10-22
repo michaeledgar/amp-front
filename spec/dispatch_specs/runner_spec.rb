@@ -96,10 +96,10 @@ describe Amp::Dispatch::Runner do
     end
   end
   
-  describe '#collect_options!' do
+  describe '#collect_options' do
     it 'stops un unknown options' do
       @runner.with_argv(['help', 'please']) do
-        options = @runner.collect_options!
+        options = @runner.collect_options(['help', 'please'])
         ARGV.should == ['help', 'please']
       end
     end
@@ -107,7 +107,7 @@ describe Amp::Dispatch::Runner do
     it 'parses --version automatically and exit' do
       @runner.with_argv(['--version', 'please']) do
         swizzling_stdout do
-          proc { @runner.collect_options! }.should raise_error(SystemExit)
+          proc { @runner.collect_options(['--version', 'please']) }.should raise_error(SystemExit)
         end
       end
     end
@@ -115,10 +115,20 @@ describe Amp::Dispatch::Runner do
     it 'displays Amp::VERSION_TITLE with --version' do
       @runner.with_argv(['--version', 'please']) do
         result = swizzling_stdout do
-          proc { @runner.collect_options! }.should raise_error(SystemExit)
+          proc { @runner.collect_options(['--version', 'please']) }.should raise_error(SystemExit)
         end
         result.should include(Amp::VERSION_TITLE)
       end
+    end
+
+    it 'returns the parsed options' do
+      options, arguments = @runner.collect_options(['help', 'please'])
+      options.should == {:version => false, :help => false}
+    end
+
+    it 'returns the unparsed arguments' do
+      options, arguments = @runner.collect_options(['help', 'please'])
+      arguments.should == ['help', 'please']
     end
   end
 end
