@@ -19,16 +19,6 @@ describe Amp::Dispatch::Runner do
     @runner = Amp::Dispatch::Runner.new(['--version'], :ampfile => "NO SUCH FILE@@@@@@@@@@@@@@@@@@")
   end
 
-  describe '#with_argv' do
-    it 'sets the value o ARGV' do
-      current = ARGV.dup
-      @runner.with_argv(['hi', 'there']) do
-        ARGV.should == ['hi', 'there']
-      end
-      ARGV.should == current
-    end
-  end
-
   describe '#run!' do
     it 'parses arguments' do
       proc { @runner.run! }.should raise_error(SystemExit)
@@ -70,55 +60,47 @@ describe Amp::Dispatch::Runner do
   
   describe '#trim_argv_for_command' do
     it 'strips arguments when arguments matches the command name' do
-      @runner.with_argv(['base', 'help']) do
-        command = mock(:command_class)
-        command.should_receive(:inspect).and_return('Amp::Command::Base')
-        @runner.trim_argv_for_command(ARGV, command).should == ['help']
-        ARGV.should == ['base', 'help']
-      end
+      arguments = ['base', 'help']
+      command = mock(:command_class)
+      command.should_receive(:inspect).and_return('Amp::Command::Base')
+      @runner.trim_argv_for_command(arguments, command).should == ['help']
+      arguments.should == ['base', 'help']
     end
     
     it 'strips arguments for commands in namespaces' do
-      @runner.with_argv(['base', 'help']) do
-        command = mock(:command_class)
-        command.should_receive(:inspect).and_return('Amp::Command::Base::Help')
-        @runner.trim_argv_for_command(ARGV, command).should == []
-        ARGV.should == ['base', 'help']
-      end
+      arguments = ['base', 'help']
+      command = mock(:command_class)
+      command.should_receive(:inspect).and_return('Amp::Command::Base::Help')
+      @runner.trim_argv_for_command(arguments, command).should == []
+      arguments.should == ['base', 'help']
     end
     
     it 'raises when the command name does not match arguments' do
-      @runner.with_argv(['base', 'hello']) do
-        command = mock(:command_class)
-        command.should_receive(:inspect).twice.and_return('Amp::Command::Base::Help')
-        proc { @runner.trim_argv_for_command(ARGV, command) }.should raise_error(ArgumentError)
-      end
+      arguments = ['base', 'hello']
+      command = mock(:command_class)
+      command.should_receive(:inspect).twice.and_return('Amp::Command::Base::Help')
+      proc { @runner.trim_argv_for_command(arguments, command) }.should raise_error(ArgumentError)
     end
   end
   
   describe '#collect_options' do
     it 'stops un unknown options' do
-      @runner.with_argv(['help', 'please']) do
-        options = @runner.collect_options(['help', 'please'])
-        ARGV.should == ['help', 'please']
-      end
+      arguments = ['help', 'please']
+      options = @runner.collect_options(arguments)
+      arguments.should == ['help', 'please']
     end
     
     it 'parses --version automatically and exit' do
-      @runner.with_argv(['--version', 'please']) do
-        swizzling_stdout do
-          proc { @runner.collect_options(['--version', 'please']) }.should raise_error(SystemExit)
-        end
+      swizzling_stdout do
+        proc { @runner.collect_options(['--version', 'please']) }.should raise_error(SystemExit)
       end
     end
     
     it 'displays Amp::VERSION_TITLE with --version' do
-      @runner.with_argv(['--version', 'please']) do
-        result = swizzling_stdout do
-          proc { @runner.collect_options(['--version', 'please']) }.should raise_error(SystemExit)
-        end
-        result.should include(Amp::VERSION_TITLE)
+      result = swizzling_stdout do
+        proc { @runner.collect_options(['--version', 'please']) }.should raise_error(SystemExit)
       end
+      result.should include(Amp::VERSION_TITLE)
     end
 
     it 'returns the parsed options' do

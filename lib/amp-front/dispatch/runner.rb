@@ -23,21 +23,19 @@ module Amp
       end
     
       def run!
-        with_argv @args do
-          global_opts, arguments = collect_options(ARGV)
-          load_ampfile!
-          load_plugins!
+        global_opts, arguments = collect_options(@args)
+        load_ampfile!
+        load_plugins!
 
-          command_class = Amp::Command.for_name(arguments.join(' '))
-          if command_class.nil?
-            command_class = Amp::Command::Help
-          else
-            arguments = trim_argv_for_command(arguments, command_class)
-          end
-          command = command_class.new
-          opts, arguments = command.collect_options(arguments)
-          command.call(opts.merge(global_opts), arguments)
+        command_class = Amp::Command.for_name(arguments.join(' '))
+        if command_class.nil?
+          command_class = Amp::Command::Help
+        else
+          arguments = trim_argv_for_command(arguments, command_class)
         end
+        command = command_class.new
+        opts, arguments = command.collect_options(arguments)
+        command.call(opts.merge(global_opts), arguments)
       end
       
       # Loads the ampfile (or whatever it's specified as) from the
@@ -82,14 +80,6 @@ module Amp
           stop_on_unknown
         end
         [hash, argv]
-      end
-    
-      def with_argv(new_argv)
-        old_argv = ARGV.dup
-        ARGV.replace(new_argv)
-        yield
-      ensure
-        ARGV.replace(old_argv)
       end
     end
   end
