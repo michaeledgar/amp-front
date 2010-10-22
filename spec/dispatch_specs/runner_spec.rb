@@ -21,7 +21,7 @@ describe Amp::Dispatch::Runner do
 
   describe '#with_argv' do
     it 'sets the value o ARGV' do
-      current = ARGV
+      current = ARGV.dup
       @runner.with_argv(['hi', 'there']) do
         ARGV.should == ['hi', 'there']
       end
