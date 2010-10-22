@@ -122,15 +122,15 @@ module Amp
       end
       
       # Runs the command with the provided options and arguments.
-      def call(options, arguments)
-        self.options = options
-        self.arguments = arguments
+      def call(opts, args)
+        self.options = opts
+        self.arguments = args
         instance_eval(&self.class.on_call)
       end
       
       # Collects the options specific to this command and returns them.
-      def collect_options(arguments)
-        args = arguments.dup
+      def collect_options(input_args)
+        args = input_args.dup
         base_options = self.class.options  # Trollop::options uses instance_eval
         @parser, hash = Trollop::options(args) do
           base_options.each do |option|
