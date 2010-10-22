@@ -25,20 +25,19 @@ module Amp
       def run!
         with_argv @args do
           global_opts = collect_options!
-          arguments = []
           load_ampfile!
           load_plugins!
 
           command_class = Amp::Command.for_name(ARGV.join(' '))
           if command_class.nil?
             command_class = Amp::Command::Help
+            arguments = []
           else
             arguments = trim_argv_for_command(command_class)
           end
           command = command_class.new
-          copts,cargs = command.collect_options(arguments)
-          opts = global_opts.merge copts
-          command.call(opts, cargs)
+          opts, arguments = command.collect_options(arguments)
+          command.call(opts.merge(global_opts), arguments)
         end
       end
       
