@@ -53,26 +53,30 @@ describe Amp::Command::Base do
       end
     end
     
-    context 'with --verbose specified and not provided' do
-      it 'returns :verbose_given => false' do
-        opts = nil
-        swizzling_argv([]) do
-          @klass.opt :verbose, 'Text', :type => :boolean
-          opts = @klass.new.collect_options
-        end
-        opts[:verbose_given].should be_false
+    context 'with --verbose specified' do
+      before do
+        @klass.opt :verbose, 'Text', :type => :boolean
       end
-    end
-    
-    context 'with --verbose specified and provided' do
-      it 'returns :verbose_given => true, :verbose => true' do
-        opts = nil
-        swizzling_argv(['--verbose']) do
-          @klass.opt :verbose, 'Text', :type => :boolean
-          opts = @klass.new.collect_options
+
+      context 'with --verbose not provided' do
+        it 'returns :verbose_given => false' do
+          opts = nil
+          swizzling_argv([]) do
+            opts = @klass.new.collect_options
+          end
+          opts[:verbose_given].should be_false
         end
-        opts[:verbose_given].should be_true
-        opts[:verbose].should be_true
+      end
+      
+      context 'with --verbose provided' do
+        it 'returns :verbose_given => true, :verbose => true' do
+          opts = nil
+          swizzling_argv(['--verbose']) do
+            opts = @klass.new.collect_options
+          end
+          opts[:verbose_given].should be_true
+          opts[:verbose].should be_true
+        end
       end
     end
   end
