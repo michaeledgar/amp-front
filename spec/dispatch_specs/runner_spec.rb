@@ -86,7 +86,7 @@ describe Amp::Dispatch::Runner do
   describe '#collect_options' do
     it 'stops un unknown options' do
       arguments = ['help', 'please']
-      options = @runner.collect_options(arguments)
+      @runner.collect_options(arguments)
       arguments.should == ['help', 'please']
     end
     
@@ -104,13 +104,13 @@ describe Amp::Dispatch::Runner do
     end
 
     it 'returns the parsed options' do
-      options, arguments = @runner.collect_options(['help', 'please'])
-      options.should == {:version => false, :help => false}
+      argopt = @runner.collect_options(['help', 'please'])
+      argopt.options.should == {:version => false, :help => false}
     end
 
     it 'returns the unparsed arguments' do
-      options, arguments = @runner.collect_options(['help', 'please'])
-      arguments.should == ['help', 'please']
+      argopt = @runner.collect_options(['help', 'please'])
+      argopt.arguments.should == ['help', 'please']
     end
   end
 end

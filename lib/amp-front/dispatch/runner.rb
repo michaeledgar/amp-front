@@ -23,19 +23,20 @@ module Amp
       end
     
       def run!
-        global_opts, arguments = collect_options(@args)
+        argopt = collect_options(@args)
+        arguments = argopt.arguments
         load_ampfile!
         load_plugins!
 
-        command_class = Amp::Command.for_name(arguments.join(' '))
+        command_class = Amp::Command.for_name(argopt.arguments.join(' '))
         if command_class.nil?
           command_class = Amp::Command::Help
         else
-          arguments = trim_argv_for_command(arguments, command_class)
+          arguments = trim_argv_for_command(argopt.arguments, command_class)
         end
         command = command_class.new
         opts, arguments = command.collect_options(arguments)
-        command.call(opts.merge(global_opts), arguments)
+        command.call(opts.merge(argopt.options), arguments)
       end
       
       # Loads the ampfile (or whatever it's specified as) from the
@@ -73,13 +74,11 @@ module Amp
       end
       
       def collect_options(arguments)
-        argv = arguments.dup
-        _, hash = Trollop::options(argv) do
+        ArgumentOptions.new(arguments).parse do
           banner "Amp - some more crystal, sir?"
           version "Amp version #{Amp::VERSION} (#{Amp::VERSION_TITLE})"
           stop_on_unknown
         end
-        [hash, argv]
       end
     end
   end
