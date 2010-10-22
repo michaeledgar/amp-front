@@ -104,8 +104,9 @@ module Amp
 
       # Specifies the block to run, or returns the block.
       def self.on_call(&block)
-        @on_call = block if block_given?
-        @on_call
+        if block_given?
+          define_method :call_without_args, &block
+        end
       end
       
       def self.desc(*args)
@@ -120,12 +121,12 @@ module Amp
       def self.opt(*args)
         self.options << args
       end
-      
+
       # Runs the command with the provided options and arguments.
       def call(opts, args)
         self.options = opts
         self.arguments = args
-        instance_eval(&self.class.on_call)
+        call_without_args
       end
       
       # Collects the options specific to this command and returns them.

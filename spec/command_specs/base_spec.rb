@@ -45,13 +45,6 @@ describe Amp::Command::Base do
       @klass.new.call(nil, nil)
       flag.should be_true
     end
-    
-    it 'returns the current handler if no block is given' do
-      @klass.on_call.should == nil
-      @klass.on_call { puts 'hello' }
-      @klass.on_call.should_not == nil
-      @klass.on_call.should respond_to(:call)
-    end
   end
   
   describe '#opt' do
