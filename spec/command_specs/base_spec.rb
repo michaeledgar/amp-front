@@ -67,30 +67,42 @@ describe Amp::Command::Base do
   describe '#collect_options' do
     context 'with no options specified' do
       it 'returns a nearly empty hash' do
-        @klass.new.collect_options.should == {:help => false}
+        @klass.new.collect_options([]).first.should == {:help => false}
       end
     end
     
-    context 'with --verbose specified and not provided' do
-      it 'returns :verbose_given => false' do
-        opts = nil
-        swizzling_argv([]) do
-          @klass.opt :verbose, 'Text', :type => :boolean
-          opts = @klass.new.collect_options
-        end
-        opts[:verbose_given].should be_false
+    context 'with --verbose specified' do
+      before do
+        @klass.opt :verbose, 'Text', :type => :boolean
       end
-    end
-    
-    context 'with --verbose specified and provided' do
-      it 'returns :verbose_given => true, :verbose => true' do
-        opts = nil
-        swizzling_argv(['--verbose']) do
-          @klass.opt :verbose, 'Text', :type => :boolean
-          opts = @klass.new.collect_options
+
+      context 'with --verbose not provided' do
+        it 'returns :verbose_given => false' do
+          opts,args = @klass.new.collect_options([])
+          opts[:verbose_given].should be_false
         end
-        opts[:verbose_given].should be_true
-        opts[:verbose].should be_true
+      end
+      
+      context 'with --verbose provided' do
+        it 'returns :verbose_given => true, :verbose => true' do
+          opts,args = @klass.new.collect_options(['--verbose'])
+          opts[:verbose_given].should be_true
+          opts[:verbose].should be_true
+        end
+
+        it 'leaves ARGV alone' do
+          swizzling_argv(['--verbose']) do
+            @klass.new.collect_options([])
+            ARGV.should == ['--verbose']
+          end
+        end
+
+        it 'returns modified arguments' do
+          arguments = ['--verbose']
+          opts,args = @klass.new.collect_options(arguments)
+          arguments.should == ['--verbose']
+          args.should == []
+        end
       end
     end
   end

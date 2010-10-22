@@ -23,21 +23,19 @@ module Amp
       end
     
       def run!
-        with_argv @args do
-          global_opts = collect_options!
-          load_ampfile!
-          load_plugins!
+        global_opts, arguments = collect_options(@args)
+        load_ampfile!
+        load_plugins!
 
-          command_class = Amp::Command.for_name(ARGV.join(' '))
-          if command_class.nil?
-            command_class = Amp::Command::Help
-          else
-            trim_argv_for_command(command_class)
-          end
-          command = command_class.new
-          opts = global_opts.merge command.collect_options
-          command.call(opts, ARGV)
+        command_class = Amp::Command.for_name(arguments.join(' '))
+        if command_class.nil?
+          command_class = Amp::Command::Help
+        else
+          arguments = trim_argv_for_command(arguments, command_class)
         end
+        command = command_class.new
+        opts, arguments = command.collect_options(arguments)
+        command.call(opts.merge(global_opts), arguments)
       end
       
       # Loads the ampfile (or whatever it's specified as) from the
@@ -61,32 +59,27 @@ module Amp
         end
       end
       
-      def trim_argv_for_command(command)
+      def trim_argv_for_command(arguments, command)
+        argv = arguments.dup
         path_parts = command.inspect.gsub(/Amp::Command::/, '').gsub(/::/, ' ').split
         path_parts.each do |part|
-          next_part = ARGV.shift
+          next_part = argv.shift
           if next_part.downcase != part.downcase
             raise ArgumentError.new(
                 "Failed to parse command line option for: #{command.inspect}")
           end
         end
+        argv
       end
       
-      def collect_options!
-        _, hash = Trollop::options do
+      def collect_options(arguments)
+        argv = arguments.dup
+        _, hash = Trollop::options(argv) do
           banner "Amp - some more crystal, sir?"
           version "Amp version #{Amp::VERSION} (#{Amp::VERSION_TITLE})"
           stop_on_unknown
         end
-        hash
-      end
-    
-      def with_argv(new_argv)
-        old_argv = ARGV.dup
-        ARGV.replace(new_argv)
-        yield
-      ensure
-        ARGV.replace(old_argv)
+        [hash, argv]
       end
     end
   end
