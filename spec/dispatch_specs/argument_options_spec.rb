@@ -25,6 +25,10 @@ describe Amp::Dispatch::ArgumentOptions do
     it 'gives empty options' do
       @subject.options.should == {}
     end
+
+    it 'has no parser' do
+      @subject.parser.should be_nil
+    end
   end
 
   context 'with arguments' do
@@ -60,6 +64,10 @@ describe Amp::Dispatch::ArgumentOptions do
       it 'is idempotent' do
         @initial_subject.arguments.should == @initial_args
         @initial_subject.options.should == {}
+      end
+
+      it 'keeps a parser for educate' do
+        @subject.parser.should respond_to(:educate)
       end
     end
 
@@ -114,6 +122,10 @@ describe Amp::Dispatch::ArgumentOptions do
         @initial_subject.arguments.should == @initial_args
         @initial_subject.options.should == {}
       end
+
+      it 'keeps a parser for educate' do
+        @subject.parser.should respond_to(:educate)
+      end
     end
 
     context 'with options' do
@@ -133,6 +145,27 @@ describe Amp::Dispatch::ArgumentOptions do
         end
         parsed.options.keys.should be_include(:foo)
         parsed.options.keys.should be_include(:debug)
+      end
+    end
+
+    context 'with same option and argument' do
+      let :verbose do
+        [:verbose, 'Provide verbose output', {:type => :boolean}]
+      end
+
+      def with_verbose(args)
+        parsed = Amp::Dispatch::ArgumentOptions.new(args, {:verbose => true}).parse(verbose)
+      end
+
+      it 'returns :verbose_given => false' do
+        parsed = with_verbose([])
+        parsed.options[:verbose_given].should be_false
+      end
+    
+      it 'returns :verbose_given => true, :verbose => true' do
+        parsed = with_verbose(['--verbose'])
+        parsed.options[:verbose_given].should be_true
+        parsed.options[:verbose].should be_true
       end
     end
   end

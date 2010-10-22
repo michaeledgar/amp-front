@@ -134,14 +134,9 @@ module Amp
       
       # Collects the options specific to this command and returns them.
       def collect_options(arguments)
-        args = arguments.dup
-        base_options = self.class.options  # Trollop::options uses instance_eval
-        @parser, hash = Trollop::options(args) do
-          base_options.each do |option|
-            opt *option
-          end
-        end
-        [hash, args]
+        args = arguments.parse(self.class.options)
+        @parser ||= args.parser
+        args
       end
       
       def education

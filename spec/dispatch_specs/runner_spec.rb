@@ -27,14 +27,18 @@ describe Amp::Dispatch::Runner do
     it 'runs the matching command' do
       mock_command_class = mock('command class')
       mock_command = mock('command')
+      mock_argopt = mock('argument options')
       Amp::Command.should_receive(:for_name).
                    with('tester --verbose').
                    and_return(mock_command_class)
       mock_command_class.should_receive(:path_parts).and_return(%w{tester})
       mock_command_class.should_receive(:new).and_return(mock_command)
-      mock_command.should_receive(:collect_options).and_return([{:verbose => true}, ['--verbose']])
+      mock_command.should_receive(:collect_options).and_return(mock_argopt)
+      options = {:verbose => true}
+      mock_argopt.should_receive(:options).and_return(options)
+      mock_argopt.should_receive(:arguments).and_return(['--verbose'])
       mock_command.should_receive(:call).with(
-          {:verbose => true, :help => false, :version => false}, ['--verbose'])
+          options, ['--verbose'])
       
       runner = Amp::Dispatch::Runner.new(['tester', '--verbose'])
       runner.run!
@@ -46,12 +50,14 @@ describe Amp::Dispatch::Runner do
                    and_return(nil)
       mock_command_class = mock('command class')
       mock_command = mock('command')
+      mock_argopt = mock('argument options')
       Amp::Command::Help = mock_command_class
       mock_command_class.should_receive(:name).at_most(:once).and_return('Amp::Command::Help')
       mock_command_class.should_receive(:new).and_return(mock_command)
-      mock_command.should_receive(:collect_options).and_return([{}, []])
-      mock_command.should_receive(:call).with(
-          {:help => false, :version => false}, [])
+      mock_command.should_receive(:collect_options).and_return(mock_argopt)
+      mock_argopt.should_receive(:options).and_return({})
+      mock_argopt.should_receive(:arguments).and_return([])
+      mock_command.should_receive(:call).with({}, [])
 
       runner = Amp::Dispatch::Runner.new([''])
       runner.run!

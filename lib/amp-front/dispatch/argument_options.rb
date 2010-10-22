@@ -14,10 +14,12 @@ module Amp::Dispatch
   class ArgumentOptions
     attr_reader :arguments
     attr_reader :options
+    attr_reader :parser
 
-    def initialize(args, opts = {})
+    def initialize(args, opts = {}, par = nil)
       @arguments = args.freeze
       @options = opts.freeze
+      @parser = par
       freeze
     end
 
@@ -25,15 +27,15 @@ module Amp::Dispatch
       args = @arguments.dup
       opts = {}
       if block
-        _, opts = Trollop::options(args, &block)
+        par, opts = Trollop::options(args, &block)
       elsif option_spec
-        _, opts = Trollop::options(args) do
+        par, opts = Trollop::options(args) do
           option_spec.each do |option|
             opt *option
           end
         end
       end
-      self.class.new(args, opts.merge!(@options))
+      self.class.new(args, opts.merge!(@options), par)
     end
 
     def trim_words(words)

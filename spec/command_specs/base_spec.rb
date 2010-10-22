@@ -65,45 +65,12 @@ describe Amp::Command::Base do
   end
   
   describe '#collect_options' do
-    context 'with no options specified' do
-      it 'returns a nearly empty hash' do
-        @klass.new.collect_options([]).first.should == {:help => false}
-      end
-    end
-    
-    context 'with --verbose specified' do
-      before do
-        @klass.opt :verbose, 'Text', :type => :boolean
-      end
-
-      context 'with --verbose not provided' do
-        it 'returns :verbose_given => false' do
-          opts,args = @klass.new.collect_options([])
-          opts[:verbose_given].should be_false
-        end
-      end
-      
-      context 'with --verbose provided' do
-        it 'returns :verbose_given => true, :verbose => true' do
-          opts,args = @klass.new.collect_options(['--verbose'])
-          opts[:verbose_given].should be_true
-          opts[:verbose].should be_true
-        end
-
-        it 'leaves ARGV alone' do
-          swizzling_argv(['--verbose']) do
-            @klass.new.collect_options([])
-            ARGV.should == ['--verbose']
-          end
-        end
-
-        it 'returns modified arguments' do
-          arguments = ['--verbose']
-          opts,args = @klass.new.collect_options(arguments)
-          arguments.should == ['--verbose']
-          args.should == []
-        end
-      end
+    it 'parses arguments' do
+      blank = mock('argument options')
+      result = mock('parsed options')
+      blank.should_receive(:parse).with([]).and_return(result)
+      result.should_receive(:parser)
+      @klass.new.collect_options(blank).should == result
     end
   end
 

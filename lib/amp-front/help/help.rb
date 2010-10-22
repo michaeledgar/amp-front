@@ -245,7 +245,7 @@ module Amp
       # @return [String] the help text for the entry.
       def text(options = {})
         instantiated = @command.new
-        instantiated.collect_options([])
+        instantiated.collect_options(Amp::Dispatch::ArgumentOptions.new([]))
         "#{@command.desc}\n#{instantiated.education}"
       end
       
