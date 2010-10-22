@@ -16,8 +16,7 @@ module Amp
   module Command
     module Validations
       def self.included(base)
-        base.__send__(:extend, ClassMethods)
-        base.__send__(:include, InstanceMethods)
+        base.extend(ClassMethods)
       end
       module ClassMethods
         def before_blocks
@@ -153,20 +152,19 @@ module Amp
           end
         end
       end
-      module InstanceMethods
-        # Is this a valid set of options and arguments for this command?
-        def valid?(opts, args)
-          self.class.before_blocks.all? {|block| block.call(opts, args)}
-        end
-        alias_method :run_before, :valid?
-      
-        def invalid?(opts, args)
-          !valid?(opts, args)
-        end
 
-        def run_after(opts, args)
-          self.class.after_blocks.all? {|block| block.call(opts, args)}
-        end
+      # Is this a valid set of options and arguments for this command?
+      def valid?(opts, args)
+        self.class.before_blocks.all? {|block| block.call(opts, args)}
+      end
+      alias_method :run_before, :valid?
+    
+      def invalid?(opts, args)
+        !valid?(opts, args)
+      end
+
+      def run_after(opts, args)
+        self.class.after_blocks.all? {|block| block.call(opts, args)}
       end
     end
   end
