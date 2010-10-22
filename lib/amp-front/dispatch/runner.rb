@@ -24,7 +24,6 @@ module Amp
     
       def run!
         argopt = collect_options(@args)
-        arguments = argopt.arguments
         load_ampfile!
         load_plugins!
 
@@ -32,10 +31,10 @@ module Amp
         if command_class.nil?
           command_class = Amp::Command::Help
         else
-          arguments = trim_argv_for_command(argopt.arguments, command_class)
+          argopt = argopt.trim_words(command_class.path_parts)
         end
         command = command_class.new
-        opts, arguments = command.collect_options(arguments)
+        opts, arguments = command.collect_options(argopt.arguments)
         command.call(opts.merge(argopt.options), arguments)
       end
       
@@ -59,20 +58,7 @@ module Amp
           Amp::Plugins::Base.loaded_plugins << instance
         end
       end
-      
-      def trim_argv_for_command(arguments, command)
-        argv = arguments.dup
-        path_parts = command.inspect.gsub(/Amp::Command::/, '').gsub(/::/, ' ').split
-        path_parts.each do |part|
-          next_part = argv.shift
-          if next_part.downcase != part.downcase
-            raise ArgumentError.new(
-                "Failed to parse command line option for: #{command.inspect}")
-          end
-        end
-        argv
-      end
-      
+
       def collect_options(arguments)
         ArgumentOptions.new(arguments).parse do
           banner "Amp - some more crystal, sir?"

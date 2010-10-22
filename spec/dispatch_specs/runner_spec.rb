@@ -30,7 +30,7 @@ describe Amp::Dispatch::Runner do
       Amp::Command.should_receive(:for_name).
                    with('tester --verbose').
                    and_return(mock_command_class)
-      mock_command_class.should_receive(:inspect).and_return('Amp::Command::Tester')
+      mock_command_class.should_receive(:path_parts).and_return(%w{tester})
       mock_command_class.should_receive(:new).and_return(mock_command)
       mock_command.should_receive(:collect_options).and_return([{:verbose => true}, ['--verbose']])
       mock_command.should_receive(:call).with(
@@ -55,31 +55,6 @@ describe Amp::Dispatch::Runner do
 
       runner = Amp::Dispatch::Runner.new([''])
       runner.run!
-    end
-  end
-  
-  describe '#trim_argv_for_command' do
-    it 'strips arguments when arguments matches the command name' do
-      arguments = ['base', 'help']
-      command = mock(:command_class)
-      command.should_receive(:inspect).and_return('Amp::Command::Base')
-      @runner.trim_argv_for_command(arguments, command).should == ['help']
-      arguments.should == ['base', 'help']
-    end
-    
-    it 'strips arguments for commands in namespaces' do
-      arguments = ['base', 'help']
-      command = mock(:command_class)
-      command.should_receive(:inspect).and_return('Amp::Command::Base::Help')
-      @runner.trim_argv_for_command(arguments, command).should == []
-      arguments.should == ['base', 'help']
-    end
-    
-    it 'raises when the command name does not match arguments' do
-      arguments = ['base', 'hello']
-      command = mock(:command_class)
-      command.should_receive(:inspect).twice.and_return('Amp::Command::Base::Help')
-      proc { @runner.trim_argv_for_command(arguments, command) }.should raise_error(ArgumentError)
     end
   end
   

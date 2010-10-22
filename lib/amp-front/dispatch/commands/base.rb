@@ -120,6 +120,10 @@ module Amp
       def self.opt(*args)
         self.options << args
       end
+
+      def self.path_parts
+        inspect.gsub(/Amp::Command::/, '').gsub(/::/, ' ').split.map(&:downcase)
+      end
       
       # Runs the command with the provided options and arguments.
       def call(options, arguments)

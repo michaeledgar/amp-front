@@ -111,6 +111,13 @@ describe Amp::Command::Base do
     @klass.name.should_not be_nil
   end
 
+  it 'knows own command words' do
+    def @klass.inspect
+      'Amp::Command::Foo::Bar'
+    end
+    @klass.path_parts.should == ['foo', 'bar']
+  end
+
   describe '#all_commands' do
     it 'should not include nil' do
       @klass.all_commands.should_not include(nil)
