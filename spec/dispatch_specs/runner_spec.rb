@@ -42,7 +42,7 @@ describe Amp::Dispatch::Runner do
                    and_return(mock_command_class)
       mock_command_class.should_receive(:inspect).and_return('Amp::Command::Tester')
       mock_command_class.should_receive(:new).and_return(mock_command)
-      mock_command.should_receive(:collect_options).and_return({:verbose => true})
+      mock_command.should_receive(:collect_options).and_return([{:verbose => true}, ['--verbose']])
       mock_command.should_receive(:call).with(
           {:verbose => true, :help => false, :version => false}, ['--verbose'])
       
@@ -59,7 +59,7 @@ describe Amp::Dispatch::Runner do
       Amp::Command::Help = mock_command_class
       mock_command_class.should_receive(:name).at_most(:once).and_return('Amp::Command::Help')
       mock_command_class.should_receive(:new).and_return(mock_command)
-      mock_command.should_receive(:collect_options).and_return({})
+      mock_command.should_receive(:collect_options).and_return([{}, []])
       mock_command.should_receive(:call).with(
           {:help => false, :version => false}, [])
 

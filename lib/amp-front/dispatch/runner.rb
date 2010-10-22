@@ -36,8 +36,9 @@ module Amp
             arguments = trim_argv_for_command(command_class)
           end
           command = command_class.new
-          opts = global_opts.merge command.collect_options(arguments)
-          command.call(opts, arguments)
+          copts,cargs = command.collect_options(arguments)
+          opts = global_opts.merge copts
+          command.call(opts, cargs)
         end
       end
       
