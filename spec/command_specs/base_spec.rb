@@ -49,7 +49,7 @@ describe Amp::Command::Base do
   describe '#collect_options' do
     context 'with no options specified' do
       it 'returns a nearly empty hash' do
-        @klass.new.collect_options.should == {:help => false}
+        @klass.new.collect_options([]).should == {:help => false}
       end
     end
     
@@ -60,27 +60,21 @@ describe Amp::Command::Base do
 
       context 'with --verbose not provided' do
         it 'returns :verbose_given => false' do
-          opts = nil
-          swizzling_argv([]) do
-            opts = @klass.new.collect_options
-          end
+          opts = @klass.new.collect_options([])
           opts[:verbose_given].should be_false
         end
       end
       
       context 'with --verbose provided' do
         it 'returns :verbose_given => true, :verbose => true' do
-          opts = nil
-          swizzling_argv(['--verbose']) do
-            opts = @klass.new.collect_options
-          end
+          opts = @klass.new.collect_options(['--verbose'])
           opts[:verbose_given].should be_true
           opts[:verbose].should be_true
         end
 
         it 'leaves ARGV alone' do
           swizzling_argv(['--verbose']) do
-            @klass.new.collect_options
+            @klass.new.collect_options([])
             ARGV.should == ['--verbose']
           end
         end

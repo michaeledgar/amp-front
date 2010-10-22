@@ -25,6 +25,7 @@ module Amp
       def run!
         with_argv @args do
           global_opts = collect_options!
+          arguments = []
           load_ampfile!
           load_plugins!
 
@@ -32,11 +33,11 @@ module Amp
           if command_class.nil?
             command_class = Amp::Command::Help
           else
-            trim_argv_for_command(command_class)
+            arguments = trim_argv_for_command(command_class)
           end
           command = command_class.new
-          opts = global_opts.merge command.collect_options
-          command.call(opts, ARGV)
+          opts = global_opts.merge command.collect_options(arguments)
+          command.call(opts, arguments)
         end
       end
       
@@ -62,14 +63,16 @@ module Amp
       end
       
       def trim_argv_for_command(command)
+        argv = ARGV.dup
         path_parts = command.inspect.gsub(/Amp::Command::/, '').gsub(/::/, ' ').split
         path_parts.each do |part|
-          next_part = ARGV.shift
+          next_part = argv.shift
           if next_part.downcase != part.downcase
             raise ArgumentError.new(
                 "Failed to parse command line option for: #{command.inspect}")
           end
         end
+        argv
       end
       
       def collect_options!

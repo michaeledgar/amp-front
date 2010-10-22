@@ -61,7 +61,7 @@ describe Amp::Dispatch::Runner do
       mock_command_class.should_receive(:new).and_return(mock_command)
       mock_command.should_receive(:collect_options).and_return({})
       mock_command.should_receive(:call).with(
-          {:help => false, :version => false}, [""])
+          {:help => false, :version => false}, [])
 
       runner = Amp::Dispatch::Runner.new([''])
       runner.run!
@@ -69,25 +69,25 @@ describe Amp::Dispatch::Runner do
   end
   
   describe '#trim_argv_for_command' do
-    it 'strips ARGV when ARGV matches the command name' do
+    it 'strips arguments when arguments matches the command name' do
       @runner.with_argv(['base', 'help']) do
         command = mock(:command_class)
         command.should_receive(:inspect).and_return('Amp::Command::Base')
-        @runner.trim_argv_for_command(command)
-        ARGV.should == ['help']
+        @runner.trim_argv_for_command(command).should == ['help']
+        ARGV.should == ['base', 'help']
       end
     end
     
-    it 'strips ARGV for commands in namespaces' do
+    it 'strips arguments for commands in namespaces' do
       @runner.with_argv(['base', 'help']) do
         command = mock(:command_class)
         command.should_receive(:inspect).and_return('Amp::Command::Base::Help')
-        @runner.trim_argv_for_command(command)
-        ARGV.should == []
+        @runner.trim_argv_for_command(command).should == []
+        ARGV.should == ['base', 'help']
       end
     end
     
-    it 'raises when the command name does not match ARGV' do
+    it 'raises when the command name does not match arguments' do
       @runner.with_argv(['base', 'hello']) do
         command = mock(:command_class)
         command.should_receive(:inspect).twice.and_return('Amp::Command::Base::Help')
