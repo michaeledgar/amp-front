@@ -33,7 +33,7 @@ module Amp
             command_class = Amp::Command::Help
             arguments = []
           else
-            arguments = trim_argv_for_command(command_class)
+            arguments = trim_argv_for_command(ARGV, command_class)
           end
           command = command_class.new
           opts, arguments = command.collect_options(arguments)
@@ -62,8 +62,8 @@ module Amp
         end
       end
       
-      def trim_argv_for_command(command)
-        argv = ARGV.dup
+      def trim_argv_for_command(arguments, command)
+        argv = arguments.dup
         path_parts = command.inspect.gsub(/Amp::Command::/, '').gsub(/::/, ' ').split
         path_parts.each do |part|
           next_part = argv.shift

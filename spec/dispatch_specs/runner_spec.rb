@@ -73,7 +73,7 @@ describe Amp::Dispatch::Runner do
       @runner.with_argv(['base', 'help']) do
         command = mock(:command_class)
         command.should_receive(:inspect).and_return('Amp::Command::Base')
-        @runner.trim_argv_for_command(command).should == ['help']
+        @runner.trim_argv_for_command(ARGV, command).should == ['help']
         ARGV.should == ['base', 'help']
       end
     end
@@ -82,7 +82,7 @@ describe Amp::Dispatch::Runner do
       @runner.with_argv(['base', 'help']) do
         command = mock(:command_class)
         command.should_receive(:inspect).and_return('Amp::Command::Base::Help')
-        @runner.trim_argv_for_command(command).should == []
+        @runner.trim_argv_for_command(ARGV, command).should == []
         ARGV.should == ['base', 'help']
       end
     end
@@ -91,7 +91,7 @@ describe Amp::Dispatch::Runner do
       @runner.with_argv(['base', 'hello']) do
         command = mock(:command_class)
         command.should_receive(:inspect).twice.and_return('Amp::Command::Base::Help')
-        proc { @runner.trim_argv_for_command(command) }.should raise_error(ArgumentError)
+        proc { @runner.trim_argv_for_command(ARGV, command) }.should raise_error(ArgumentError)
       end
     end
   end
