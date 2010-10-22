@@ -6,6 +6,7 @@ module Amp
 
   module Dispatch
     autoload :Runner, 'amp-front/dispatch/runner.rb'
+    autoload :ArgumentOptions, 'amp-front/dispatch/argument_options.rb'
   end
 
   module Help
