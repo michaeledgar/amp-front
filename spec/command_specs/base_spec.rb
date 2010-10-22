@@ -77,6 +77,13 @@ describe Amp::Command::Base do
           opts[:verbose_given].should be_true
           opts[:verbose].should be_true
         end
+
+        it 'leaves ARGV alone' do
+          swizzling_argv(['--verbose']) do
+            @klass.new.collect_options
+            ARGV.should == ['--verbose']
+          end
+        end
       end
     end
   end
