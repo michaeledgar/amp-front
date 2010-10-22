@@ -78,6 +78,12 @@ describe Amp::Command::Base do
             ARGV.should == ['--verbose']
           end
         end
+
+        it 'returns modified arguments' do
+          arguments = ['--verbose']
+          opts = @klass.new.collect_options(arguments)
+          arguments.should == []
+        end
       end
     end
   end
