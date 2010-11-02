@@ -75,14 +75,13 @@ module Amp
     class Base
       include Validations
 
+      # --------------- class part ----------------
+
       class << self
         attr_accessor :name, :options, :desc
       end
       self.name = 'Base'
       
-      # These are the runtime options selected when the command is called.
-      attr_accessor :options, :arguments
-
       # This tracks all subclasses (and subclasses of subclasses, etc). Plus, this
       # method is inherited, so Wool::Plugins::Git.all_subclasses will have all
       # subclasses of Wool::Plugins::Git!
@@ -121,10 +120,18 @@ module Amp
         self.options << args
       end
 
+      # Return the class name as the array of words used to run it
+      #  Help => [help]
+      #  Git::Rebase => [git rebase]
       def self.path_parts
         inspect.gsub(/Amp::Command::/, '').gsub(/::/, ' ').split.map(&:downcase)
       end
       
+      # --------------- instance part ----------------
+
+      # These are the runtime options selected when the command is called.
+      attr_accessor :options, :arguments
+
       # Runs the command with the provided options and arguments.
       def call(options, arguments)
         self.options = options
