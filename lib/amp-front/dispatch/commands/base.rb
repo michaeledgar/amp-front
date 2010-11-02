@@ -132,12 +132,19 @@ module Amp
       # These are the runtime options selected when the command is called.
       attr_accessor :options, :arguments
 
-      # Runs the command with the provided options and arguments.
-      def call(argopt = nil)
+      def initialize(argopt = nil)
         if (argopt)
+          argopt = collect_options(argopt)
           self.options = argopt.options
           self.arguments = argopt.arguments
+        else
+          self.options = {}
+          self.arguments = []
         end
+      end
+
+      # Runs the command with the provided options and arguments.
+      def call
         instance_eval(&self.class.on_call)
       end
       

@@ -23,8 +23,10 @@ describe Amp::Command::Base do
   describe '#call' do
     def mock_args(args, opts)
       argopt = mock('argument options')
-      argopt.should_receive('arguments').once.and_return(args)
-      argopt.should_receive('options').once.and_return(opts)
+      argopt.should_receive('arguments').and_return(args)
+      argopt.should_receive('options').and_return(opts)
+      argopt.should_receive('parse').and_return(argopt)
+      argopt.should_receive('parser')
       argopt
     end
 
@@ -32,7 +34,7 @@ describe Amp::Command::Base do
       input_opts = {:a => :b}
       received_opts = nil
       @klass.on_call { received_opts = options }
-      @klass.new.call(mock_args(nil, input_opts))
+      @klass.new(mock_args(nil, input_opts)).call
       received_opts.should == input_opts
     end
     
@@ -40,7 +42,7 @@ describe Amp::Command::Base do
       input_args = [1, 2, 3]
       received_args = nil
       @klass.on_call { received_args = arguments }
-      @klass.new.call(mock_args(input_args, nil))
+      @klass.new(mock_args(input_args, nil)).call
       received_args.should == input_args
     end
   end 
