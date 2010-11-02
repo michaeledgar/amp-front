@@ -129,19 +129,22 @@ module Amp
       
       # --------------- instance part ----------------
 
-      # These are the runtime options selected when the command is called.
-      attr_accessor :options, :arguments
-
       def initialize(argopt = nil)
-        if (argopt)
-          argopt = collect_options(argopt)
-          self.options = argopt.options
-          self.arguments = argopt.arguments
-        else
-          self.options = {}
-          self.arguments = []
-        end
+        @argopt = collect_options(argopt)
       end
+
+      def options
+        @argopt.options
+      end
+      
+      def arguments
+        @argopt.arguments
+      end
+
+      def parser
+        @argopt.parser
+      end
+      private :parser
 
       # Runs the command with the provided options and arguments.
       def call
@@ -150,15 +153,18 @@ module Amp
       
       # Collects the options specific to this command and returns them.
       def collect_options(arguments)
-        args = arguments.parse(self.class.options)
-        @parser ||= args.parser
-        args
+        if arguments
+          arguments.parse(self.class.options)
+        else
+          #parse call is so options get included in help
+          Amp::Dispatch::ArgumentOptions.new([]).parse(self.class.options)
+        end
       end
       
       def education
-        if @parser
+        if parser
           output = StringIO.new
-          @parser.educate(output)
+          parser.educate(output)
           output.string
         else
           ''

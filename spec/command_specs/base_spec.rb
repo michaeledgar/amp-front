@@ -23,10 +23,10 @@ describe Amp::Command::Base do
   describe '#call' do
     def mock_args(args, opts)
       argopt = mock('argument options')
-      argopt.should_receive('arguments').and_return(args)
-      argopt.should_receive('options').and_return(opts)
+      argopt.should_receive('arguments').at_most(:once).and_return(args)
+      argopt.should_receive('options').at_most(:once).and_return(opts)
       argopt.should_receive('parse').and_return(argopt)
-      argopt.should_receive('parser')
+      #argopt.should_receive('parser')
       argopt
     end
 
@@ -78,8 +78,11 @@ describe Amp::Command::Base do
       blank = mock('argument options')
       result = mock('parsed options')
       blank.should_receive(:parse).with([]).and_return(result)
-      result.should_receive(:parser)
       @klass.new.collect_options(blank).should == result
+    end
+
+    it 'handles nil' do
+      @klass.new.collect_options(nil).should be_kind_of(Amp::Dispatch::ArgumentOptions)
     end
   end
 
