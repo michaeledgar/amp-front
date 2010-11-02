@@ -16,7 +16,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 def run_command(command, opts={}, args=[])
   swizzling_stdout do
-    Amp::Command.for_name(command).new.call(opts, args)
+    Amp::Command.for_name(command).new.call(Amp::Dispatch::ArgumentOptions.new(args, opts))
   end
 end
 

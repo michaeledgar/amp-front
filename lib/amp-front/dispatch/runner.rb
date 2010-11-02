@@ -35,7 +35,7 @@ module Amp
         end
         command = command_class.new
         argopt = command.collect_options(argopt)
-        command.call(argopt.options, argopt.arguments)
+        command.call(argopt)
       end
       
       # Loads the ampfile (or whatever it's specified as) from the

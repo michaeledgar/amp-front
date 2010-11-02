@@ -34,11 +34,7 @@ describe Amp::Dispatch::Runner do
       mock_command_class.should_receive(:path_parts).and_return(%w{tester})
       mock_command_class.should_receive(:new).and_return(mock_command)
       mock_command.should_receive(:collect_options).and_return(mock_argopt)
-      options = {:verbose => true}
-      mock_argopt.should_receive(:options).and_return(options)
-      mock_argopt.should_receive(:arguments).and_return(['--verbose'])
-      mock_command.should_receive(:call).with(
-          options, ['--verbose'])
+      mock_command.should_receive(:call).with(mock_argopt)
       
       runner = Amp::Dispatch::Runner.new(['tester', '--verbose'])
       runner.run!
@@ -55,9 +51,7 @@ describe Amp::Dispatch::Runner do
       mock_command_class.should_receive(:name).at_most(:once).and_return('Amp::Command::Help')
       mock_command_class.should_receive(:new).and_return(mock_command)
       mock_command.should_receive(:collect_options).and_return(mock_argopt)
-      mock_argopt.should_receive(:options).and_return({})
-      mock_argopt.should_receive(:arguments).and_return([])
-      mock_command.should_receive(:call).with({}, [])
+      mock_command.should_receive(:call).with(mock_argopt)
 
       runner = Amp::Dispatch::Runner.new([''])
       runner.run!

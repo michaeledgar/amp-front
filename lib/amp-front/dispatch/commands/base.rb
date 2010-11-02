@@ -133,9 +133,11 @@ module Amp
       attr_accessor :options, :arguments
 
       # Runs the command with the provided options and arguments.
-      def call(options, arguments)
-        self.options = options
-        self.arguments = arguments
+      def call(argopt = nil)
+        if (argopt)
+          self.options = argopt.options
+          self.arguments = argopt.arguments
+        end
         instance_eval(&self.class.on_call)
       end
       

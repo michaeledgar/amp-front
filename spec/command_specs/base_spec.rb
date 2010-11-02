@@ -21,11 +21,18 @@ describe Amp::Command::Base do
   end
   
   describe '#call' do
+    def mock_args(args, opts)
+      argopt = mock('argument options')
+      argopt.should_receive('arguments').once.and_return(args)
+      argopt.should_receive('options').once.and_return(opts)
+      argopt
+    end
+
     it "sets the instance's options before running on_call" do
       input_opts = {:a => :b}
       received_opts = nil
       @klass.on_call { received_opts = options }
-      @klass.new.call(input_opts, nil)
+      @klass.new.call(mock_args(nil, input_opts))
       received_opts.should == input_opts
     end
     
@@ -33,7 +40,7 @@ describe Amp::Command::Base do
       input_args = [1, 2, 3]
       received_args = nil
       @klass.on_call { received_args = arguments }
-      @klass.new.call(nil, input_args)
+      @klass.new.call(mock_args(input_args, nil))
       received_args.should == input_args
     end
   end 
@@ -42,7 +49,7 @@ describe Amp::Command::Base do
     it "sets the class's on_call handler when a block is given" do
       flag = false
       @klass.on_call { flag = true }
-      @klass.new.call(nil, nil)
+      @klass.new.call
       flag.should be_true
     end
     
